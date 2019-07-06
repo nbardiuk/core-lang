@@ -26,6 +26,18 @@ iNil = INil
 iNum :: Int -> Iseq
 iNum n = IStr (show n)
 
+-- | number left padded with spaces
+iFWNum :: Int -> Int -> Iseq
+iFWNum width n = iStr $ space (width - length digits) ++ digits
+  where
+    digits = show n
+
+-- | numbers a list
+iLayn :: [Iseq] -> Iseq
+iLayn seqs = iConcat $ zipWith lay_item [1 ..] seqs
+  where
+    lay_item n s = iConcat [iFWNum 4 n, iStr ") ", iIndent s, iNewline]
+
 iStr :: String -> Iseq
 iStr = IStr
 
