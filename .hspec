@@ -1,0 +1,5 @@
+--format=progress
+
+--rerun
+--rerun-all-on-success
+--failure-report .hspec-failures

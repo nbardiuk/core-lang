@@ -1,12 +1,16 @@
-module Language ( CoreProgram
-                , CoreScDefn
-                , CoreExpr
-                , Name
-                , CoreAlt
-                , Alter
-                , Expr (..)
-                , isAtomicExpr
-                ) where
+module Language
+  ( CoreProgram
+  , CoreScDefn
+  , CoreExpr
+  , Name
+  , CoreAlt
+  , Alter
+  , Expr(..)
+  , isAtomicExpr
+  , recursive
+  , nonRecursive
+  )
+where
 
 data Expr a = EVar Name             -- ^ Variables
             | ENum Int              -- ^ Numbers
@@ -37,11 +41,11 @@ recursive, nonRecursive :: IsRec
 recursive = True
 nonRecursive = False
 
-bindersOf :: [(a,b)] -> [a]
-bindersOf defns = [name | (name, rhs) <- defns]
+bindersOf :: [(a, b)] -> [a]
+bindersOf defns = [ name | (name, rhs) <- defns ]
 
-rhssOf :: [(a,b)] -> [b]
-rhssOf defns = [rhs | (name, rhs) <- defns]
+rhssOf :: [(a, b)] -> [b]
+rhssOf defns = [ rhs | (name, rhs) <- defns ]
 
 -- | expression with no internal structure
 isAtomicExpr :: Expr a -> Bool

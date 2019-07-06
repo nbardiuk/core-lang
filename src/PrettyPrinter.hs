@@ -1,10 +1,9 @@
 module PrettyPrinter (pprint) where
 
 import           Data.List (intersperse)
-import           Language  (Alter, CoreAlt, CoreExpr, CoreProgram, CoreScDefn,
+import           Language  (CoreAlt, CoreExpr, CoreProgram, CoreScDefn,
                             Expr (..), Name, isAtomicExpr)
 
--- TODO add unit tests for pretty printer
 data Iseq = INil
           | IStr String
           | IAppend Iseq Iseq
@@ -32,17 +31,18 @@ iIndent :: Iseq -> Iseq
 iIndent = IIndent
 
 iDisplay :: Iseq -> String
-iDisplay seq = flatten 0 [(seq, 0)]
+iDisplay s = flatten 0 [(s, 0)]
 
-flatten :: Int            -- Current column; 0 for first column
-        -> [(Iseq, Int)]  -- Work list
-        -> String         -- Result
+flatten
+  :: Int            -- Current column; 0 for first column
+  -> [(Iseq, Int)]  -- Work list
+  -> String         -- Result
 flatten _ [] = ""
 flatten col ((INil, _) : seqs) = flatten col seqs
 flatten col ((IStr s, _) : seqs) = s ++ flatten (col + length s) seqs
-flatten col ((IAppend s1 s2, indent) : seqs) = flatten col ((s1, indent) : (s2, indent): seqs)
-flatten _ ((INewline, indent) : seqs) = '\n' : (space indent) ++ (flatten indent seqs)
-flatten col ((IIndent seq, _) : seqs) = flatten col ((seq, col) : seqs)
+flatten col ((IAppend s1 s2, indent) : seqs) = flatten col ((s1, indent) : (s2, indent) : seqs)
+flatten _ ((INewline, indent) : seqs) = '\n' : space indent ++ flatten indent seqs
+flatten col ((IIndent s, _) : seqs) = flatten col ((s, col) : seqs)
 
 space :: Int -> String
 space n = replicate n ' '
@@ -58,12 +58,12 @@ pprExpr (EVar v) = iStr v
 pprExpr (ENum n) = iStr (show n)
 pprExpr (EAp e1 e2) = iConcat [pprExpr e1, iStr " ", pprAExpr e2]
 pprExpr (ELet isrec defns expr) = iConcat [ iStr keyword, iNewline
-                                          , iStr " ", iIndent (pprDefns defns), iNewline
+                                          , iStr "  ", iIndent (pprDefns defns), iNewline
                                           , iStr "in ", pprExpr expr ]
-                                            where keyword = if isrec then "let" else "letrec"
+                                            where keyword = if isrec then "letrec" else "let"
 pprExpr (ECase e alts) = iConcat [ iStr "case ", pprExpr e, iStr " of", iNewline
-                                 , iIndent (iInterleave iNewline (map pprAlter alts))]
-pprExpr (ELam vs e) = iConcat [ iStr "(\\ "
+                                 , iStr "  ", iIndent (iInterleave iNewline (map pprAlter alts))]
+pprExpr (ELam vs e) = iConcat [ iStr "(\\"
                               , iInterleave (iStr " ") (map iStr vs)
                               , iStr " -> ", pprExpr e
                               , iStr ")"]
