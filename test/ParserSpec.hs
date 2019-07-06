@@ -5,6 +5,7 @@ import Parser
   , keywords
   , pApply
   , pLit
+  , pNum
   , pOneOrMore
   , pOneOrMoreWithSep
   , pVar
@@ -34,6 +35,11 @@ spec =
       it "no match" $ p ["John", "!"] `shouldBe` []
       it "match" $
         p ["hello", "John", "!"] `shouldBe` [("hello", ["John", "!"])]
+    describe "number parser" $ do
+      let p = pNum
+      it "no tokens" $ p [] `shouldBe` []
+      it "no match" $ p ["a", "b"] `shouldBe` []
+      it "match" $ p ["32132", "a"] `shouldBe` [(32132, ["a"])]
     describe "vars parser" $ do
       let p = pVar
       it "no tokens" $ p [] `shouldBe` []

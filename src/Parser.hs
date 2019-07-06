@@ -91,3 +91,6 @@ pSat :: (String -> Bool) -> Parser String
 pSat p (t:ts)
   | p t = [(t, ts)]
 pSat _ _ = []
+
+pNum :: Parser Int
+pNum = pSat (all isDigit) `pApply` read
