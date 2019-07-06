@@ -1,5 +1,6 @@
 module ParserSpec where
 
+import Control.Monad (forM_)
 import Parser
   ( clex
   , keywords
@@ -44,8 +45,9 @@ spec =
       let p = pVar
       it "no tokens" $ p [] `shouldBe` []
       it "no match" $ p ["1", "213123"] `shouldBe` []
-      it "keywords" $ p keywords `shouldBe` []
       it "match" $ p ["aa", "ab", "23"] `shouldBe` [("aa", ["ab", "23"])]
+      forM_ keywords $ \key ->
+        it ("keyword " ++ key) $ p [key, "aa"] `shouldBe` []
     describe "one or more" $ do
       let p = pOneOrMore (pLit "a")
       it "no tokens" $ p [] `shouldBe` []
