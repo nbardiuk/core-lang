@@ -80,7 +80,7 @@ pprExpr :: CoreExpr -> Iseq
 pprExpr (EVar v) = iStr v
 pprExpr (ENum n) = iStr (show n)
 pprExpr (EAp (EAp (EVar o) e1) e2)
-  | o `elem` ["+", "*", "-", "/", "<", "<=", "==", ">=", ">", "&", "|"] =
+  | o `elem` ["+", "*", "-", "/", "<", "<=", "==", "/=", ">=", ">", "&", "|"] =
     iConcat [pprAExpr e1, iStr (" " ++ o ++ " "), pprAExpr e2]
 pprExpr (EAp e1 e2) = iConcat [pprExpr e1, iStr " ", pprAExpr e2]
 pprExpr (ELet isrec defns expr) =

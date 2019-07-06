@@ -69,7 +69,7 @@ spec =
         ] `shouldBe`
       "call x = (\\a -> f a) x"
     describe "infix operators" $
-      forM_ ["+", "*", "-", "/", "<", "<=", "==", ">=", ">", "&", "|"] $ \op ->
+      forM_ ["+", "*", "-", "/", "<", "<=", "==", "/=", ">=", ">", "&", "|"] $ \op ->
         it op $
         pprint [("f", ["x", "y"], EAp (EAp (EVar op) (EVar "x")) (EVar "y"))] `shouldBe`
         printf "f x y = x %s y" op
