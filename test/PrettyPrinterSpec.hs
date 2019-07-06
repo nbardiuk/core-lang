@@ -1,9 +1,11 @@
 module PrettyPrinterSpec where
 
+import Control.Monad (forM_)
 import Data.List (intercalate)
 import Language (Expr(..), nonRecursive, recursive)
 import PrettyPrinter (pprint)
 import Test.Hspec
+import Text.Printf (printf)
 
 spec :: SpecWith ()
 spec =
@@ -66,3 +68,8 @@ spec =
           , EAp (ELam ["a"] (EAp (EVar "f") (EVar "a"))) (EVar "x"))
         ] `shouldBe`
       "call x = (\\a -> f a) x"
+    describe "infix operators" $
+      forM_ ["+", "*", "-", "/", "<", "<=", "==", ">=", ">", "&", "|"] $ \op ->
+        it op $
+        pprint [("f", ["x", "y"], EAp (EAp (EVar op) (EVar "x")) (EVar "y"))] `shouldBe`
+        printf "f x y = x %s y" op
